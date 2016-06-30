@@ -13,7 +13,9 @@
     "babel-preset-es2015": "^6.9.0",
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
-    "mocha": "^2.5.3"
+    "js-yaml": "^3.6.1",
+    "mocha": "^2.5.3",
+    "yamljs": "^0.2.8"
   },
   "dependencies": {
     "lodash": "^4.13.1"
