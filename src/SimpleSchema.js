@@ -5,67 +5,87 @@ export default class {
     this.schema = schema;
   }
 
-  getSimpleType(key, typeFun) {
+  ind(x) {return Array(x + 1).join(' ');}
+
+  line(t, content) {
+    return `${this.ind(t)}${content}\n`;
+  }
+
+  getSimpleType(key, typeFun, t) {
     if (typeFun.name == 'Number') {
-      return `type: ${this.schema[key].decimal ? `number` : `integer`}`;
+      return this.line(t, `type: ${this.schema[key].decimal ? `number` : `integer`}`);
     }
     else {
-      return `type: ${_.toLower(typeFun.name)}`;
+      return this.line(t, `type: ${_.toLower(typeFun.name)}`);
     }
   }
 
-  getArrayType(key, typeFun) {
-    return `type: array
-              items:
-                ${this.getType(key, typeFun[0])}`;
+  getArrayType(key, typeFun, t) {
+    let out = ``
+    out += this.line(t, `type: array`);
+    out += this.line(t, `items:`);
+    out += this.getType(key, typeFun[0], t + 2);
+    return out;
   }
 
-  getType(key, typeFun) {
-    console.log(key);
+  getType(key, typeFun, t) {
     if(typeFun[0]) {
-      return this.getArrayType(key, typeFun);
+      return this.getArrayType(key, typeFun, t);
     }
     if (typeFun.name != 'Object') {
-      return this.getSimpleType(key, typeFun);
+      return this.getSimpleType(key, typeFun, t);
     }
     return ``;
   }
 
-  getPropField(key, field) {
+  getPropField(key, field, t) {
     if (field == 'type') {
-      return `${this.getType(key, this.schema[key][field])}`;
+      return this.getType(key, this.schema[key][field], t);
     }
-    return `${field}: ${this.schema[key][field]}`;
+    return this.line(t, `${field}: ${this.schema[key][field]}`);
   }
 
   // schema, string => template literal
-  getProp(key) {
+  getProp(key, t) {
     let out = ``;
-    out += `${this.getPropField(key, 'type')}
-        `;
-    out += this.getPropField(key, 'label');
-    return _.trim(out);
+    out += this.getPropField(key, 'type', t);
+    out += this.getPropField(key, 'label', t);
+    return out;
   }
 
   // schema => template literal
-  getProps() {
+  getProps(t) {
     let out = ``
     _.keys(this.schema).forEach((key) => {
-      out += `${key}:
-      `;
-      out += `  ${this.getProp(key)}
-      `;
+      out += this.line(t, `${key}:`);
+      out += this.getProp(key, t+2);
     });
-    return _.trim(out);
+    return out;
+  }
+
+  getReq(t) {
+    const reqs = [];
+    let out = ``;
+    _.keys(this.schema).forEach((key) => {
+      if (!this.schema[key].optional) {
+        reqs.push(key);
+      }
+    });
+    out += this.line(t, `required:`);
+    reqs.forEach((key) => {
+      out += this.line(t, `- ${key}`);
+    });
+    return out;
   }
 
   // schema => template literal
-  toYaml() {
-    return `
-    type: object
-    properties:
-      ${this.getProps()}
-`;
+  toYaml(t) {
+    let out = ``;
+    out += this.line(t, `type: object`);
+    out += this.line(t, `properties:`);
+    out += this.getProps(t + 2);
+    out += this.getReq(t);
+    return out;
   }
 
 

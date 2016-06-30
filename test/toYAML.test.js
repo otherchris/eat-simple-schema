@@ -28,28 +28,27 @@ const BookSchema = new SimpleSchema({
 
 describe('', () => {
   it('', () => {
-    expect(BookSchema.toYaml()).to.equal(
-`
-    type: object
-    properties:
-      title:
+    expect(BookSchema.toYaml(0)).to.equal(
+`type: object
+properties:
+  title:
+    type: string
+    label: Title of the book
+  pages:
+    type: integer
+    label: Number of pages
+  timesRead:
+    type: number
+    label: How many times the book has been read
+  borrowers:
+    type: array
+    items:
+      type: array
+      items:
         type: string
-        label: Title of the book
-      pages:
-        type: integer
-        label: Number of pages
-      timesRead:
-        type: number
-        label: How many times the book has been read
-      borrowers:
-        type: array
-        items:
-          type: array
-          items:
-            type: string
-        label: Who borrowed it
-    required:
-    - title
+    label: Who borrowed it
+required:
+- title
 `
     );
   });
