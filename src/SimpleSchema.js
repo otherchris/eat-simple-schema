@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import YAML from 'js-yaml';
 
 export default class {
   constructor(schema) {
@@ -8,22 +7,33 @@ export default class {
 
   getSimpleType(key, typeFun) {
     if (typeFun.name == 'Number') {
-      return this.schema[key].decimal ? `number` : `integer`
+      return `type: ${this.schema[key].decimal ? `number` : `integer`}`;
     }
     else {
-      return `${_.toLower(typeFun.name)}`;
+      return `type: ${_.toLower(typeFun.name)}`;
     }
   }
 
+  getArrayType(key, typeFun) {
+    return `type: array
+              items:
+                ${this.getType(key, typeFun[0])}`;
+  }
+
   getType(key, typeFun) {
+    console.log(key);
+    if(typeFun[0]) {
+      return this.getArrayType(key, typeFun);
+    }
     if (typeFun.name != 'Object') {
       return this.getSimpleType(key, typeFun);
     }
+    return ``;
   }
 
   getPropField(key, field) {
     if (field == 'type') {
-      return `${field}: ${this.getType(key, this.schema[key][field])}`;
+      return `${this.getType(key, this.schema[key][field])}`;
     }
     return `${field}: ${this.schema[key][field]}`;
   }
