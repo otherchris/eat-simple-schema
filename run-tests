@@ -1,0 +1,5 @@
+#!/usr/local/bin/zsh
+
+babel src -d lib
+babel test -d lib/test
+mocha --compilers js:babel-register lib/test

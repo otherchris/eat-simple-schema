@@ -1,5 +1,5 @@
-import SimpleSchema from '../src/SimpleSchema';
-import expect from 'chai';
+import SimpleSchema from '../SimpleSchema';
+var expect = require('chai').expect;
 
 
 console.log(SimpleSchema);
@@ -30,7 +30,6 @@ describe('', () => {
   it('', () => {
     expect(BookSchema.toYaml()).to.equal(
 `
-  BookSchema:
     type: object
     properties:
       title:
