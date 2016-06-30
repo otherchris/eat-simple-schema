@@ -6,13 +6,24 @@ export default class {
     this.schema = schema;
   }
 
-  getType(typeFun) {
-    return `${_.toLower(typeFun.name)}`
+  getSimpleType(key, typeFun) {
+    if (typeFun.name == 'Number') {
+      return this.schema[key].decimal ? `number` : `integer`
+    }
+    else {
+      return `${_.toLower(typeFun.name)}`;
+    }
+  }
+
+  getType(key, typeFun) {
+    if (typeFun.name != 'Object') {
+      return this.getSimpleType(key, typeFun);
+    }
   }
 
   getPropField(key, field) {
     if (field == 'type') {
-      return `${field}: ${this.getType(this.schema[key][field])}`;
+      return `${field}: ${this.getType(key, this.schema[key][field])}`;
     }
     return `${field}: ${this.schema[key][field]}`;
   }
