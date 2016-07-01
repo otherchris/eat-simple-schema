@@ -28,40 +28,53 @@ export default class SimpleSchema {
     let out = ``
     out += this.line(t, `type: array`);
     out += this.line(t, `items:`);
-    out += this.getType(key, typeFun[0], t + 2);
+    out += this.getPropType(key, typeFun[0], t + 2);
     return out;
   }
 
-  getType(key, typeFun, t) {
+  getBlackboxType(key, t) {
+    const typeObj = {};
+    _.keys(this.schema).forEach((_key) => {
+      if(_key.includes(key + '.')) {
+        typeObj[(/\.(.*)/).exec(_key)[1]] = this.schema[_key];
+      }
+    });
+    return (new SimpleSchema(typeObj)).toYaml(t);
+  }
+
+  getPropType(key, typeFun, t) {
+
     let simpleTypes = ['String', 'Number', 'Boolean'];
+
+    // empty
     if(!typeFun) {
       return ``
     }
+
+    // array
     if(typeFun[0]) {
       return this.getArrayType(key, typeFun, t);
     }
+
+    // simple
     if (_.indexOf(simpleTypes, typeFun.name) >= 0) {
       return this.getSimpleType(key, typeFun, t);
     }
+
+    // $ref
     if (typeFun.swag_name) {
       return this.line(t, `$ref: '#/definitions/${typeFun.swag_name}'`);
     }
-    _.keys(this.schema).forEach((_key) => {
-      if(_key.includes(key + '.')) {
-        typeFun[(/\.(.*)/).exec(_key)[1]] = this.schema[_key];
-      }
-    })
-    return (new SimpleSchema(typeFun)).toYaml(t - 2);
-  }
 
-  getPropField(key, field, t) {
-    if (field == 'type') {
-      return this.getType(key, this.schema[key][field], t);
+    // blackbox
+    if(_.has(this.schema[key], 'blackbox')) {
+      return this.getBlackboxType(key, t);
     }
-    if (field == 'label') {
-      return this.line(t, `description: ${this.schema[key][field]}`);
+
+    // object literal
+    if (typeof typeFun == 'Object') {
+      return this.line(t, 'object');
     }
-    return this.line(t, `${key}: ${this.schema[key][field]}`);
   }
 
   getPropLabel(key, t) {
@@ -77,8 +90,8 @@ export default class SimpleSchema {
       return ``;
     }
     let out = ``;
-    out += this.getPropField(key, 'type', t);
-    out += this.getPropLabel(key, 'label', t);
+    out += this.getPropType(key, this.schema[key].type, t);
+    out += this.getPropLabel(key, t);
     return out;
   }
 
@@ -86,7 +99,7 @@ export default class SimpleSchema {
   getProps(t) {
     let out = this.line(t, `properties:`);
     _.keys(this.schema).forEach((key) => {
-      if (!key.includes('.') && !this.schema[key].hasKey('blackbox')) {
+      if (!key.includes('.')) {
         out += this.line(t + 2, `${key}:`);
         out += this.getProp(key, t + 4);
       }
