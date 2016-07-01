@@ -64,6 +64,13 @@ export default class SimpleSchema {
     return this.line(t, `${key}: ${this.schema[key][field]}`);
   }
 
+  getPropLabel(key, t) {
+    if (this.schema[key].label) {
+      return this.line(t, `description: ${this.schema[key].label}`);
+    }
+    return this.line(t, `description: No description provided`);
+  }
+
   // schema, string => template literal
   getProp(key, t) {
     if (!this.schema[key]) { //skip if prop is empty
@@ -71,7 +78,7 @@ export default class SimpleSchema {
     }
     let out = ``;
     out += this.getPropField(key, 'type', t);
-    out += this.getPropField(key, 'label', t);
+    out += this.getPropLabel(key, 'label', t);
     return out;
   }
 
@@ -79,7 +86,7 @@ export default class SimpleSchema {
   getProps(t) {
     let out = this.line(t, `properties:`);
     _.keys(this.schema).forEach((key) => {
-      if (!key.includes('.')) {
+      if (!key.includes('.') && !this.schema[key].hasKey('blackbox')) {
         out += this.line(t + 2, `${key}:`);
         out += this.getProp(key, t + 4);
       }
