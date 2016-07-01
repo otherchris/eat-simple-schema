@@ -28,6 +28,7 @@ const BookSchema = new SimpleSchema({
 
 describe('', () => {
   it('', () => {
+    console.log(BookSchema.toYaml(0));
     expect(BookSchema.toYaml(0)).to.equal(
 `type: object
 properties:

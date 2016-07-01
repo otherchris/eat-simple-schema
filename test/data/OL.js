@@ -1,12 +1,42 @@
-/**
- * OrderLinesSchema
- * todo: description...
- */
+import SimpleSchema from '../../SimpleSchema';
+import sinon from 'sinon';
 
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Enums } from '../App/Enums';
-import * as SchemaHelper from '../App/SchemaHelper';
+const SchemaHelper = {
+  cleanUrl() {},
+  _id() {},
+  created() {},
+  updated() {},
+}
 
+SimpleSchema.RegEx = { Url: 0 };
+const Enums = {
+  OrderLines: {
+    notificationTypes: {
+      values: () => {},
+      options: () => {},
+    },
+    statuses: {
+      values: () => {},
+      options: () => {},
+    },
+    targetTypes: {
+      values: () => {},
+      options: () => {},
+    },
+    creativeTypes: {
+      values: () => {},
+      options: () => {},
+    },
+    notificationMethods: {
+      values: () => {},
+      options: () => {},
+    },
+    deployTargets: {
+      values: () => {},
+      options: () => {},
+    }
+  }
+};
 export const OrderLineCreativeSchema = new SimpleSchema({
   _id: {
     type: String,
@@ -21,11 +51,6 @@ export const OrderLineLandingPageSchema = new SimpleSchema({
     regEx: SimpleSchema.RegEx.Url,
     label: 'Clickthrough URL',
     optional: true,
-    autoValue: function () {
-      if (this.value && this.value.length > 0) {
-        return SchemaHelper.cleanUrl(this.value);
-      }
-    },
   },
   thumb: {
     type: String,
@@ -231,32 +256,17 @@ export let OrderLinesSchema = new SimpleSchema({
     type: Date,
     label: 'Start',
     optional: true,
-    autoValue: function () {
-      if (this.value) {
-        return SchemaHelper.cleanDateValue(this.value);
-      }
-    },
   },
   stop: {
     type: Date,
     label: 'Stop',
     optional: true,
-    autoValue: function () {
-      if (this.value) {
-        return SchemaHelper.cleanDateValue(this.value);
-      }
-    },
   },
   name: {
     type: String,
     min: 1,
     max: 32,
     index: true,
-    autoValue: function() {
-      if (this.value) {
-        return this.value.substr(0, 32);
-      }
-    },
   },
   refId: {
     label: 'Reference ID',
@@ -264,7 +274,6 @@ export let OrderLinesSchema = new SimpleSchema({
     index: true,
     optional: true,
     max: 64,
-    // autoValue: SchemaHelper.stringAutoValue(),
   },
   creativeType: {
     type: Number,
@@ -289,7 +298,6 @@ export let OrderLinesSchema = new SimpleSchema({
     optional: true,
     // defaultValue: 1,
     allowedValues: Enums.OrderLines.statuses.values(),
-    autoValue: SchemaHelper.onlyAdminOrTrusted.bind(null, 1),
   },
   orgId: {
     type: String,
@@ -395,4 +403,3 @@ export let OrderLinesSchema = new SimpleSchema({
   },
 
 });
-

@@ -29,6 +29,9 @@ export default class {
   }
 
   getType(key, typeFun, t) {
+    if(!typeFun) {
+      return ``
+    }
     if(typeFun[0]) {
       return this.getArrayType(key, typeFun, t);
     }
