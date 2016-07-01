@@ -1,9 +1,12 @@
+import "babel-polyfill"
 import _ from 'lodash';
+//import SimpleSchema from 'meteor/aldeed:meteor-simple-schema
 
-export default class {
+export default class SimpleSchema {
   constructor(schema) {
     this.schema = schema;
     this.context = {};
+
   }
 
   ind(x) {return Array(x + 1).join(' ');}
@@ -40,15 +43,25 @@ export default class {
     if (_.indexOf(simpleTypes, typeFun.name) >= 0) {
       return this.getSimpleType(key, typeFun, t);
     }
-    console.log(typeFun);
-    return this.line(t, `$ref: #/definitions/${typeFun.swag_name}`);
+    if (typeFun.swag_name) {
+      return this.line(t, `$ref: '#/definitions/${typeFun.swag_name}'`);
+    }
+    _.keys(this.schema).forEach((_key) => {
+      if(_key.includes(key + '.')) {
+        typeFun[(/\.(.*)/).exec(_key)[1]] = this.schema[_key];
+      }
+    })
+    return (new SimpleSchema(typeFun)).toYaml(t - 2);
   }
 
   getPropField(key, field, t) {
     if (field == 'type') {
       return this.getType(key, this.schema[key][field], t);
     }
-    return this.line(t, `${field}: ${this.schema[key][field]}`);
+    if (field == 'label') {
+      return this.line(t, `description: ${this.schema[key][field]}`);
+    }
+    return this.line(t, `${key}: ${this.schema[key][field]}`);
   }
 
   // schema, string => template literal
@@ -64,10 +77,12 @@ export default class {
 
   // schema => template literal
   getProps(t) {
-    let out = ``
+    let out = this.line(t, `properties:`);
     _.keys(this.schema).forEach((key) => {
-      out += this.line(t, `${key}:`);
-      out += this.getProp(key, t+2);
+      if (!key.includes('.')) {
+        out += this.line(t + 2, `${key}:`);
+        out += this.getProp(key, t + 4);
+      }
     });
     return out;
   }
@@ -83,22 +98,25 @@ export default class {
         reqs.push(key);
       }
     });
-    out += this.line(t, `required:`);
-    reqs.forEach((key) => {
-      out += this.line(t, `- ${key}`);
-    });
+    if (reqs.length > 0) {
+      out += this.line(t, `required:`);
+      reqs.forEach((key) => {
+        out += this.line(t, `- ${key}`);
+      });
+    }
     return out;
   }
 
   // schema => template literal
   toYaml(t) {
     let out = ``;
-    out += this.line(t, `type: object`);
-    out += this.line(t, `properties:`);
+    if(this.swag_name) {
+      out += this.line(t, `${this.swag_name}:`);
+    }
+    out += this.line(t + 2, `type: object`);
     out += this.getProps(t + 2);
-    out += this.getReq(t);
+    out += this.getReq(t + 2);
     return out;
   }
-
-
 }
+

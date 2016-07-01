@@ -5,6 +5,9 @@ Object.keys(OL).forEach((key) => {
   OL[key].swag_name = key;
 });
 
-
-console.log(Object.keys(OL));
-console.log(OL.OrderLinesSchema.toYaml(0));
+console.log("swagger: '2.0'\n");
+console.log("defintions:");
+Object.keys(OL).forEach((key) => {
+  console.log(OL[key]);
+  console.log(OL[key].toYaml(2));
+});
