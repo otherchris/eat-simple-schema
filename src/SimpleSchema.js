@@ -3,6 +3,7 @@ import _ from 'lodash';
 export default class {
   constructor(schema) {
     this.schema = schema;
+    this.context = {};
   }
 
   ind(x) {return Array(x + 1).join(' ');}
@@ -29,16 +30,18 @@ export default class {
   }
 
   getType(key, typeFun, t) {
+    let simpleTypes = ['String', 'Number', 'Boolean'];
     if(!typeFun) {
       return ``
     }
     if(typeFun[0]) {
       return this.getArrayType(key, typeFun, t);
     }
-    if (typeFun.name != 'Object') {
+    if (_.indexOf(simpleTypes, typeFun.name) >= 0) {
       return this.getSimpleType(key, typeFun, t);
     }
-    return ``;
+    console.log(typeFun);
+    return this.line(t, `$ref: #/definitions/${typeFun.swag_name}`);
   }
 
   getPropField(key, field, t) {
