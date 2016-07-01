@@ -50,6 +50,9 @@ export default class {
 
   // schema, string => template literal
   getProp(key, t) {
+    if (!this.schema[key]) { //skip if prop is empty
+      return ``;
+    }
     let out = ``;
     out += this.getPropField(key, 'type', t);
     out += this.getPropField(key, 'label', t);
@@ -70,6 +73,9 @@ export default class {
     const reqs = [];
     let out = ``;
     _.keys(this.schema).forEach((key) => {
+      if (!this.schema[key]) { //skip if prop is empty
+        return ``;
+      }
       if (!this.schema[key].optional) {
         reqs.push(key);
       }
