@@ -6,9 +6,6 @@ export default class SimpleSchema {
   constructor(schema) {
     this.schema = schema;
     this.context = {};
-
-    //fakery
-    this.RegEx = {Url: 'urlregex'};
   }
 
   ind(x) {return Array(x + 1).join(' ');}
@@ -46,7 +43,7 @@ export default class SimpleSchema {
 
   getPropType(key, typeFun, t) {
 
-    let simpleTypes = ['String', 'Number', 'Boolean'];
+    let simpleTypes = ['String', 'Number', 'Boolean', 'Date'];
 
     // empty
     if(!typeFun) {
@@ -64,8 +61,8 @@ export default class SimpleSchema {
     }
 
     // $ref
-    if (typeFun.swag_name) {
-      return this.line(t, `$ref: '#/definitions/${typeFun.swag_name}'`);
+    if (typeFun.schema) {
+      return this.line(t, `$ref: '#/definitions/${typeFun.name}'`);
     }
 
     // blackbox
@@ -139,6 +136,11 @@ export default class SimpleSchema {
     out += this.getProps(t + 2);
     out += this.getReq(t + 2);
     return out;
+  }
+
+  //fakery
+  static RegEx() {
+    return {Url: 'urlregex'};
   }
 
 }

@@ -8,7 +8,6 @@ const SchemaHelper = {
   updated() {},
 }
 
-SimpleSchema.RegEx = { Url: 0 };
 const Enums = {
   OrderLines: {
     notificationTypes: {

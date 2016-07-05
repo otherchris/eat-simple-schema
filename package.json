@@ -1,6 +1,6 @@
 {
   "name": "eat-simple-schema",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "description": "Produce Swagger compliant YAML schema given a source file of Meteor SimpleSchema",
   "main": "lib/SimpleSchema.js",
   "scripts": {
