@@ -7,6 +7,8 @@ export default class SimpleSchema {
     this.schema = schema;
     this.context = {};
 
+    //fakery
+    this.RegEx = {Url: 'urlregex'};
   }
 
   ind(x) {return Array(x + 1).join(' ');}
@@ -138,5 +140,6 @@ export default class SimpleSchema {
     out += this.getReq(t + 2);
     return out;
   }
+
 }
 
