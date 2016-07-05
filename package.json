@@ -1,10 +1,12 @@
 {
   "name": "eat-simple-schema",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "description": "Produce Swagger compliant YAML schema given a source file of Meteor SimpleSchema",
-  "main": "index.js",
+  "main": "lib/SimpleSchema.js",
   "scripts": {
-    "test": "./run-tests"
+    "compile": "babel -d lib/ src/",
+    "test": "./run-tests",
+    "prepublish": "npm run compile"
   },
   "author": "",
   "license": "ISC",
