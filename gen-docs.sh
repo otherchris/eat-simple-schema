@@ -10,6 +10,7 @@ mv temp src/data/collect.js
 
 echo "Replace dependencies"
 ./proc-schema.sh src/data
+cp $1/api/App/SchemaHelper.js src/App
 
 echo "Replace Enums"
 mkdir -p src/App/Enums
