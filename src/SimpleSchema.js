@@ -18,6 +18,11 @@ export default class SimpleSchema {
     if (typeFun.name == 'Number') {
       return this.line(t, `type: ${this.schema[key].decimal ? `number` : `integer`}`);
     }
+    if (typeFun.name == 'Date') {
+      let out = this.line(t, `type: string`);
+      out += this.line(t, `format: date-time`);
+      return out;
+    }
     else {
       return this.line(t, `type: ${_.toLower(typeFun.name)}`);
     }
@@ -38,7 +43,7 @@ export default class SimpleSchema {
         typeObj[(/\.(.*)/).exec(_key)[1]] = this.schema[_key];
       }
     });
-    return (new SimpleSchema(typeObj)).toYaml(t);
+    return (new SimpleSchema(typeObj)).toYaml(t - 2);
   }
 
   getPropType(key, typeFun, t) {
@@ -62,7 +67,7 @@ export default class SimpleSchema {
 
     // $ref
     if (typeFun.schema) {
-      return this.line(t, `$ref: '#/definitions/${typeFun.name}'`);
+      return this.line(t, `$ref: '#/definitions/${typeFun.swag_name}'`);
     }
 
     // blackbox
