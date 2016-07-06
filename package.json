@@ -23,6 +23,8 @@
     "yamljs": "^0.2.8"
   },
   "dependencies": {
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "moment": "^2.14.1",
+    "s-enum": "^1.1.5"
   }
 }
