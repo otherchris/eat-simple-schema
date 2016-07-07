@@ -13,6 +13,10 @@ echo "Replace dependencies"
 cp $1/api/App/SchemaHelper.js src/App
 ruby shEdit.rb
 
+echo "AD HOC: Remove OrderLineStats (duplicated in OrderLines???)"
+sed -i '' '/OrderLineStats/d' ./src/data/collect.js
+rm -f src/data/OrderLineStats.schema.js
+
 echo "Replace Enums"
 mkdir -p src/App/Enums
 cp -r $2/* src/App/Enums

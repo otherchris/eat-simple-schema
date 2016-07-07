@@ -36,6 +36,7 @@ export default class SimpleSchema {
     return out;
   }
 
+  //TODO rename this function
   getBlackboxType(key, t) {
     const typeObj = {};
     _.keys(this.schema).forEach((_key) => {
@@ -72,10 +73,11 @@ export default class SimpleSchema {
 
     // blackbox
     if(_.has(this.schema[key], 'blackbox')) {
-      return this.getBlackboxType(key, t);
+      return 'BLACKBOX';
     }
 
     // object literal
+    // TODO rename the getBlackboxType function
     if (typeFun.name == 'Object') {
       return this.getBlackboxType(key, t);
     }
@@ -103,7 +105,7 @@ export default class SimpleSchema {
   getProps(t) {
     let out = this.line(t, `properties:`);
     _.keys(this.schema).forEach((key) => {
-      if (!key.includes('.')) {
+      if (!key.includes('.') && !_.has(this.schema[key], 'blackbox')) {
         out += this.line(t + 2, `${key}:`);
         out += this.getProp(key, t + 4);
       }
