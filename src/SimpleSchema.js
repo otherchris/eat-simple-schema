@@ -76,8 +76,8 @@ export default class SimpleSchema {
     }
 
     // object literal
-    if (typeof typeFun == 'Object') {
-      return this.line(t, 'object');
+    if (typeFun.name == 'Object') {
+      return this.getBlackboxType(key, t);
     }
   }
 
