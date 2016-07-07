@@ -32,7 +32,12 @@ export default class SimpleSchema {
     let out = ``
     out += this.line(t, `type: array`);
     out += this.line(t, `items:`);
-    out += this.getPropType(key, typeFun[0], t + 2);
+    if (typeFun[0].name =='Object') {
+      out += this.getBlackboxType(key, t + 2)
+    }
+    else {
+      out += this.getPropType(key, typeFun[0], t + 2);
+    }
     return out;
   }
 
@@ -41,7 +46,7 @@ export default class SimpleSchema {
     const typeObj = {};
     _.keys(this.schema).forEach((_key) => {
       if(_key.includes(key + '.')) {
-        typeObj[(/\.(.*)/).exec(_key)[1]] = this.schema[_key];
+        typeObj[_key.replace(/([^\.]|.(?=\$))*\./, '')] = this.schema[_key];
       }
     });
     return (new SimpleSchema(typeObj)).toYaml(t - 2);
@@ -68,12 +73,7 @@ export default class SimpleSchema {
 
     // $ref
     if (typeFun.schema) {
-      return this.line(t, `$ref: '#/definitions/${typeFun.swag_name}'`);
-    }
-
-    // blackbox
-    if(_.has(this.schema[key], 'blackbox')) {
-      return 'BLACKBOX';
+      return this.line(t, `$ref: "#/definitions/${typeFun.swag_name}"`);
     }
 
     // object literal
@@ -85,7 +85,7 @@ export default class SimpleSchema {
 
   getPropLabel(key, t) {
     if (this.schema[key].label) {
-      return this.line(t, `description: ${this.schema[key].label}`);
+      return this.line(t, `description: ${this.schema[key].label.replace(/:/g, ';')}`);
     }
     return this.line(t, `description: No description provided`);
   }
@@ -117,7 +117,7 @@ export default class SimpleSchema {
     const reqs = [];
     let out = ``;
     _.keys(this.schema).forEach((key) => {
-      if (!this.schema[key]) { //skip if prop is empty
+      if (!this.schema[key] || key.includes('.')) { //skip if prop is empty or has dot
         return ``;
       }
       if (!this.schema[key].optional) {
