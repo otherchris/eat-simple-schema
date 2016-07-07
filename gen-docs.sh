@@ -11,9 +11,12 @@ mv temp src/data/collect.js
 echo "Replace dependencies"
 ./proc-schema.sh src/data
 cp $1/api/App/SchemaHelper.js src/App
+ruby shEdit.rb
 
 echo "Replace Enums"
 mkdir -p src/App/Enums
 cp -r $2/* src/App/Enums
 
 echo "YAML conversion"
+npm run compile
+node lib/index.js

@@ -148,5 +148,7 @@ export default class SimpleSchema {
     return {Url: 'urlregex'};
   }
 
+  static extendOptions(obj) {};
+  static messages(obj) {};
 }
 
